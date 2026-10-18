@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,11 +16,32 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: List in project dir
-        run: find . -name "*.xcodeproj" -type d
+      - name: Generate Xcode project
+        run: |
+          if [ ! -d "TromboneTuner.xcodeproj" ]; then
+            python3 make_xcodeproj.py
+          fi
 
-      - name: Try xcodebuild -list with workspace
-        run: xcodebuild -workspace TromboneTuner.xcworkspace -list 2>&1 | tail -30
+      - name: Ensure shared scheme
+        run: |
+          mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
+          cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
 
-      - name: Try xcodebuild -list with project
-        run: xcodebuild -project TromboneTuner.xcodeproj -list 2>&1 | tail -40
+      - name: Build
+        run: |
+          xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" build
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          APP_PATH=$(find build -name "TromboneTuner.app" -path "*Release-iphoneos*" | head -1)
+          cp -R "$APP_PATH" Payload/
+          zip -r TromboneTuner.ipa Payload/
+          ls -lh TromboneTuner.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TromboneTuner-ipa
+          path: TromboneTuner.ipa
+          retention-days: 7
