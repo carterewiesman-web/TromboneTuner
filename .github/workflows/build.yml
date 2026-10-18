@@ -1,0 +1,49 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Archive and package IPA
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project TromboneTuner.xcodeproj \
+            -scheme TromboneTuner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/TromboneTuner.xcarchive \
+            archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
+            ONLY_ACTIVE_ARCH=NO
+          mkdir -p build/Payload
+          cp -R build/TromboneTuner.xcarchive/Products/Applications/TromboneTuner.app build/Payload/
+          # Verify the binary exists and is arm64 before zipping
+          file build/Payload/TromboneTuner.app/TromboneTuner
+          lipo -info build/Payload/TromboneTuner.app/TromboneTuner
+          cd build
+          zip -qry TromboneTuner.ipa Payload
+          unzip -l TromboneTuner.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TromboneTuner-ipa
+          path: build/TromboneTuner.ipa
+          if-no-files-found: error
+          retention-days: 90
