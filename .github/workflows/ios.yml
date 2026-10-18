@@ -11,23 +11,22 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show Xcode version
+      - name: Show Xcode
         run: xcodebuild -version
 
-      - name: Generate Xcode project (if missing)
+      - name: Generate project
         run: |
           if [ ! -d "TromboneTuner.xcodeproj" ]; then
             python3 make_xcodeproj.py
           fi
 
-      - name: Ensure shared scheme exists
+      - name: Ensure scheme
         run: |
-          if [ ! -f "TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme" ]; then
-            mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
-            cat > TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme << 'EOF'
+          mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
+          cat > TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme << 'SCHEME'
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1500"
@@ -98,28 +97,20 @@ jobs:
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
-EOF
-          fi
+SCHEME
 
-      - name: Build unsigned .app for iOS Device
+      - name: Build
         run: |
-          xcodebuild -scheme TromboneTuner \
-            -project TromboneTuner.xcodeproj \
-            -sdk iphoneos \
-            -configuration Release \
-            -derivedDataPath ./build \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_ALLOWED=NO \
-            build
+          xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release -derivedDataPath ./build CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO build
 
-      - name: Package IPA (unsigned)
+      - name: Package
         run: |
           mkdir -p Payload
           cp -R ./build/Build/Products/Release-iphoneos/TromboneTuner.app Payload/
           zip -r TromboneTuner.ipa Payload
           ls -lh TromboneTuner.ipa
 
-      - name: Upload IPA artifact
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: TromboneTuner-ipa
