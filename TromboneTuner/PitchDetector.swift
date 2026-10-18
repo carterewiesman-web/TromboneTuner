@@ -11,21 +11,19 @@ final class PitchDetector: NSObject {
     private let bufferSize: UInt32 = 8192
     private var sampleRate: Double = 44100
 
-    // MARK: - FFT buffers (reused to avoid allocations)
+    // MARK: - FFT state
 
+    private var fftSetup: FFTSetup?
+    private var log2n: vDSP_Length = 0
     private var window: [Float] = []
-    private var realIn: [Float] = []
-    private var imagIn: [Float] = []
-    private var realOut: [Float] = []
-    private var imagOut: [Float] = []
+    private var realp: [Float] = []
+    private var imagp: [Float] = []
+    private var magnitudes: [Float] = []
 
     // MARK: - Configuration
 
-    /// Tunable frequency window (trombone ~ E2 to Bb5, with headroom).
     let minFrequency: Double = 50.0
     let maxFrequency: Double = 1300.0
-
-    /// Cents tolerance considered "in tune".
     let inTuneCents: Double = 12.0
 
     var onPitch: ((_ frequency: Double, _ note: Note, _ cents: Double) -> Void)?
@@ -34,11 +32,30 @@ final class PitchDetector: NSObject {
 
     override init() {
         super.init()
-        resetBuffers()
+        setupFFT()
     }
 
     deinit {
         stop()
+        if let setup = fftSetup {
+            vDSP_destroy_fftsetup(setup)
+        }
+    }
+
+    private func setupFFT() {
+        let n = Int(bufferSize)
+        log2n = vDSP_Length(log2(Float(n)))
+        fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2))
+
+        window = [Float](repeating: 0, count: n)
+        for i in 0..<n {
+            window[i] = 0.5 * (1.0 - cos(2.0 * .pi * Float(i) / Float(n - 1)))
+        }
+
+        let half = n / 2
+        realp = [Float](repeating: 0, count: half)
+        imagp = [Float](repeating: 0, count: half)
+        magnitudes = [Float](repeating: 0, count: half)
     }
 
     // MARK: - Lifecycle
@@ -69,58 +86,68 @@ final class PitchDetector: NSObject {
     private func process(buffer: AVAudioPCMBuffer, sampleRate: Double) {
         guard let channelData = buffer.floatChannelData?.pointee else { return }
         let frameCount = Int(buffer.frameLength)
-        guard frameCount > 0 else { return }
+        guard frameCount > 0, let setup = fftSetup else { return }
 
-        // Copy mono samples into the windowed input buffer.
-        let count = min(frameCount, realIn.count)
-        for i in 0..<count {
-            realIn[i] = channelData[i] * window[i]
+        let n = Int(bufferSize)
+        let half = n / 2
+
+        // Window the input and pack into split-complex (real, imag=0) for real FFT.
+        var windowed = [Float](repeating: 0, count: n)
+        let copyCount = min(frameCount, n)
+        for i in 0..<copyCount {
+            windowed[i] = channelData[i] * window[i]
         }
-        for i in count..<realIn.count {
-            realIn[i] = 0
+
+        // vDSP_fft_zrip expects split complex: even samples -> realp, odd -> imagp (packed format)
+        windowed.withUnsafeBufferPointer { ptr in
+            let buf = UnsafeRawBufferPointer(ptr)
+            realp.withUnsafeMutableBufferPointer { rBuf in
+                imagp.withUnsafeMutableBufferPointer { iBuf in
+                    var split = DSPSplitComplex(realp: rBuf.baseAddress!, imagp: iBuf.baseAddress!)
+                    // Copy packed: real[i] = windowed[2i], imag[i] = windowed[2i+1] for real-input FFT
+                    for i in 0..<half {
+                        rBuf.baseAddress![i] = windowed[2 * i]
+                        iBuf.baseAddress![i] = windowed[2 * i + 1]
+                    }
+                    vDSP_fft_zrip(setup, &split, 1, log2n, FFTDirection(FFT_FORWARD))
+                }
+            }
         }
 
-        // Forward FFT.
-        guard let fftSetup = fftSetup else { return }
-        var input = vDSP_DFT_SplitComplex(realp: &realIn, imagp: &imagIn)
-        var output = vDSP_DFT_SplitComplex(realp: &realOut, imagp: &imagOut)
-        vDSP_DFT_zop(fftSetup, &input, &output)
+        // Compute magnitudes for bins 0..half-1
+        var split = DSPSplitComplex(realp: &realp, imagp: &imagp)
+        vDSP_zvmags(&split, 1, &magnitudes, 1, vDSP_Length(half))
 
-        let nyquist = sampleRate / 2.0
-        let binWidth = nyquist / Double(realOut.count / 2)
+        // binWidth = sampleRate / n (for real FFT, each bin spans sampleRate/n)
+        let binWidth = sampleRate / Double(n)
 
-        // Find peak magnitude in the target frequency range.
-        var bestBin = -1
-        var bestMag: Float = 0
         let minBin = max(1, Int(minFrequency / binWidth))
-        let maxBin = min(realOut.count / 2 - 2, Int(maxFrequency / binWidth))
+        let maxBin = min(half - 2, Int(maxFrequency / binWidth))
+        guard minBin < maxBin else { return }
 
-        for bin in minBin...maxBin {
-            let r = realOut[bin]
-            let i = imagOut[bin]
-            let mag = sqrtf(r * r + i * i)
-            if mag > bestMag {
-                bestMag = mag
+        var bestBin = minBin
+        var bestMag = magnitudes[minBin]
+        for bin in (minBin + 1)...maxBin {
+            if magnitudes[bin] > bestMag {
+                bestMag = magnitudes[bin]
                 bestBin = bin
             }
         }
 
-        guard bestBin > 0, bestMag > 0.0001 else { return }
+        guard bestMag > 0.0001 else { return }
 
-        // Parabolic interpolation for sub-bin accuracy.
-        let y0 = realOut[bestBin - 1] * realOut[bestBin - 1] + imagOut[bestBin - 1] * imagOut[bestBin - 1]
-        let y1 = realOut[bestBin] * realOut[bestBin] + imagOut[bestBin] * imagOut[bestBin]
-        let y2 = realOut[bestBin + 1] * realOut[bestBin + 1] + imagOut[bestBin + 1] * imagOut[bestBin + 1]
-
-        var fraction = 0.0
-        let denom = (y0 - 2 * y1 + y2)
+        // Parabolic interpolation using magnitudes (energy).
+        let y0 = magnitudes[bestBin - 1]
+        let y1 = magnitudes[bestBin]
+        let y2 = magnitudes[bestBin + 1]
+        let denom = y0 - 2 * y1 + y2
+        var fraction: Float = 0
         if denom != 0 {
-            fraction = 0.5 * Double(y0 - y2) / Double(denom)
+            fraction = 0.5 * (y0 - y2) / denom
         }
-        // Clamp interpolation to reasonable range.
-        let clampedFraction = max(-1.0, min(1.0, fraction))
+        fraction = max(-1.0, min(1.0, fraction))
 
-        let frequency = Double(bestBin) * binWidth + clampedFraction * binWidth
+        let frequency = Double(bestBin) * binWidth + Double(fraction) * binWidth
 
         let result = Note.nearest(to: frequency)
 
@@ -128,25 +155,4 @@ final class PitchDetector: NSObject {
             self?.onPitch?(frequency, result.note, result.cents)
         }
     }
-
-    // MARK: - Setup
-
-    private func resetBuffers() {
-        let n = Int(bufferSize)
-        window = [Float](repeating: 0, count: n)
-        realIn = [Float](repeating: 0, count: n)
-        imagIn = [Float](repeating: 0, count: n)
-        realOut = [Float](repeating: 0, count: n)
-        imagOut = [Float](repeating: 0, count: n)
-
-        // Hann window.
-        for i in 0..<n {
-            window[i] = 0.5 * (1.0 - cos(2.0 * .pi * Float(i) / Float(n - 1)))
-        }
-    }
-
-    /// Lazily created vDSP FFT setup.
-    private lazy var fftSetup: vDSP_DFT_Setup? = {
-        vDSP_DFT_zop_CreateSetup(nil, vDSP_Length(bufferSize), vDSP_DFT_Direction.FORWARD)
-    }()
 }
