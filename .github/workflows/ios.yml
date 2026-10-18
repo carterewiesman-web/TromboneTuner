@@ -1,0 +1,49 @@
+name: Build Trombone Tuner IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Generate Xcode project (if missing)
+        run: |
+          if [ ! -d "TromboneTuner.xcodeproj" ]; then
+            python3 make_xcodeproj.py
+          fi
+
+      - name: Build unsigned .app for iOS Device
+        run: |
+          xcodebuild -project TromboneTuner.xcodeproj \
+            -target TromboneTuner \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath ./build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package IPA (unsigned)
+        run: |
+          mkdir -p Payload
+          cp -R ./build/Build/Products/Release-iphoneos/TromboneTuner.app Payload/
+          zip -r TromboneTuner.ipa Payload
+          ls -lh TromboneTuner.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TromboneTuner-ipa
+          path: TromboneTuner.ipa
+          retention-days: 7
