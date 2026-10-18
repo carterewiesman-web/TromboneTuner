@@ -27,21 +27,5 @@ jobs:
           mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
 
-      - name: Build
-        run: |
-          xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" build
-
-      - name: Package IPA
-        run: |
-          mkdir -p Payload
-          APP_PATH=$(find build -name "TromboneTuner.app" -path "*Release-iphoneos*" | head -1)
-          cp -R "$APP_PATH" Payload/
-          zip -r TromboneTuner.ipa Payload/
-          ls -lh TromboneTuner.ipa
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TromboneTuner-ipa
-          path: TromboneTuner.ipa
-          retention-days: 7
+      - name: Build for simulator (debug)
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build 2>&1 | tail -80
