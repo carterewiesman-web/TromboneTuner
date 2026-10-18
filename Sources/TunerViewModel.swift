@@ -19,18 +19,25 @@ final class TunerViewModel: ObservableObject {
     private let historySize = 7
     private let deadZoneCents = 6.0
     private var running = false
+    private var pendingStart = false
 
     func start() {
-        guard !running else { return }
+        // SwiftUI can fire onAppear + scenePhase .active back-to-back; without this
+        // guard two permission requests resolve at once and installTap runs twice.
+        guard !running, !pendingStart else { return }
+        pendingStart = true
         detector.onMeasurement = { [weak self] measurement in
             Task { @MainActor [weak self] in
                 self?.process(measurement)
             }
         }
         detector.requestPermission { [weak self] in
+            self?.pendingStart = false
             self?.permissionDenied = true
         } onGranted: { [weak self] in
             guard let self else { return }
+            self.pendingStart = false
+            guard !self.running else { return }
             do {
                 try self.detector.start()
                 self.running = true
@@ -41,6 +48,7 @@ final class TunerViewModel: ObservableObject {
     }
 
     func stop() {
+        pendingStart = false
         guard running else { return }
         detector.stop()
         running = false

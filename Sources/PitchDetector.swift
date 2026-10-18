@@ -11,6 +11,7 @@ struct PitchMeasurement {
 /// -> peak bin with parabolic interpolation -> fundamental frequency.
 final class PitchDetector {
     private let audioEngine = AVAudioEngine()
+    private var isRunning = false
     private let n = 4096
     private let log2n: vDSP_Length
     private let fftSetup: FFTSetup
@@ -57,6 +58,10 @@ final class PitchDetector {
     private var lastKnownSampleRate: Double = 48000
 
     func start() throws {
+        // Idempotency: a second installTap on the same bus crashes AVFAudio
+        // ("required condition is false: nullptr == Tap()").
+        guard !isRunning else { return }
+
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
         try session.setActive(true)
@@ -69,9 +74,12 @@ final class PitchDetector {
         }
         audioEngine.prepare()
         try audioEngine.start()
+        isRunning = true
     }
 
     func stop() {
+        guard isRunning else { return }
+        isRunning = false
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
