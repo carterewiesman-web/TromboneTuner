@@ -28,23 +28,4 @@ jobs:
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
 
       - name: Build for iOS device
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release ARCHS=arm64 ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="" build
-
-      - name: Package IPA
-        run: |
-          mkdir -p Payload
-          APP_PATH=$(find build -name "TromboneTuner.app" -path "*Release-iphoneos/*" 2>/dev/null | head -1)
-          if [ -z "$APP_PATH" ]; then
-            APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "TromboneTuner.app" -path "*Release-iphoneos/*" 2>/dev/null | head -1)
-          fi
-          echo "APP_PATH=$APP_PATH"
-          cp -R "$APP_PATH" Payload/
-          zip -r TromboneTuner.ipa Payload/
-          ls -lh TromboneTuner.ipa
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TromboneTuner-ipa
-          path: TromboneTuner.ipa
-          retention-days: 7
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGN_STYLE=Manual build
