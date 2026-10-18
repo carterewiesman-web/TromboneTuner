@@ -16,21 +16,11 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Generate Xcode project
-        run: |
-          if [ ! -d "TromboneTuner.xcodeproj" ]; then
-            python3 make_xcodeproj.py
-          fi
-          ls -la TromboneTuner.xcodeproj/
+      - name: List in project dir
+        run: find . -name "*.xcodeproj" -type d
 
-      - name: Ensure shared scheme
-        run: |
-          mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
-          cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
-          cat TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme | head -5
+      - name: Try xcodebuild -list with workspace
+        run: xcodebuild -workspace TromboneTuner.xcworkspace -list 2>&1 | tail -30
 
-      - name: List targets
-        run: xcodebuild -project TromboneTuner.xcodeproj -list
-
-      - name: Build
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" build
+      - name: Try xcodebuild -list with project
+        run: xcodebuild -project TromboneTuner.xcodeproj -list 2>&1 | tail -40
