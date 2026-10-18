@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,5 +27,37 @@ jobs:
           mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
 
-      - name: Build for iOS device
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGN_STYLE=Manual build
+      - name: Archive
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGN_STYLE=Manual archive -archivePath build/TromboneTuner.xcarchive
+
+      - name: Export IPA
+        run: |
+          cat > ExportOptions.plist << 'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key>
+  <string>ad-hoc</string>
+  <key>teamID</key>
+  <string></string>
+  <key>signingStyle</key>
+  <string>manual</string>
+  <key>stripSwiftSymbols</key>
+  <true/>
+</dict>
+</plist>
+PLIST
+          xcodebuild -exportArchive -archivePath build/TromboneTuner.xcarchive -exportPath build/export -exportOptionsPlist ExportOptions.plist
+
+      - name: Copy IPA
+        run: |
+          find build/export -name "*.ipa" -exec cp {} TromboneTuner.ipa \;
+          ls -lh TromboneTuner.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TromboneTuner-ipa
+          path: TromboneTuner.ipa
+          retention-days: 7
