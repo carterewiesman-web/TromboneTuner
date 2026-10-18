@@ -8,20 +8,14 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 120
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Show Xcode version
-        run: xcodebuild -version
-      - name: Generate Xcode project
+      - name: Build for simulator (debug)
         run: |
-          if [ ! -d "TromboneTuner.xcodeproj" ]; then
-            python3 make_xcodeproj.py
-          fi
-      - name: Ensure shared scheme
-        run: |
+          xcodebuild -version
+          python3 make_xcodeproj.py
           mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
-      - name: Build for simulator (debug)
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+          xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
