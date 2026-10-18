@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,14 +27,19 @@ jobs:
           mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
 
-      - name: Build IPA
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO build
+      - name: Clean
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj clean
+
+      - name: Build
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" PROVISIONING_PROFILE="" build
 
       - name: Package
         run: |
           mkdir -p Payload
-          cp -R build/Build/Products/Release-iphoneos/TromboneTuner.app Payload/
-          zip -r TromboneTuner.ipa Payload
+          APP_PATH=$(find build -name "TromboneTuner.app" -type d | head -1)
+          echo "APP_PATH=$APP_PATH"
+          cp -R "$APP_PATH" Payload/
+          zip -r TromboneTuner.ipa Payload/
           ls -lh TromboneTuner.ipa
 
       - name: Upload artifact
