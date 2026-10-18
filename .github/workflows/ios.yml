@@ -21,30 +21,16 @@ jobs:
           if [ ! -d "TromboneTuner.xcodeproj" ]; then
             python3 make_xcodeproj.py
           fi
+          ls -la TromboneTuner.xcodeproj/
 
       - name: Ensure shared scheme
         run: |
           mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
           cp TromboneTuner.xcscheme TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme
+          cat TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme | head -5
 
-      - name: Clean
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj clean
+      - name: List targets
+        run: xcodebuild -project TromboneTuner.xcodeproj -list
 
       - name: Build
-        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" PROVISIONING_PROFILE="" build
-
-      - name: Package
-        run: |
-          mkdir -p Payload
-          APP_PATH=$(find build -name "TromboneTuner.app" -type d | head -1)
-          echo "APP_PATH=$APP_PATH"
-          cp -R "$APP_PATH" Payload/
-          zip -r TromboneTuner.ipa Payload/
-          ls -lh TromboneTuner.ipa
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TromboneTuner-ipa
-          path: TromboneTuner.ipa
-          retention-days: 7
+        run: xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" build
