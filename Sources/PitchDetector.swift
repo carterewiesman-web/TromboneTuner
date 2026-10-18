@@ -33,10 +33,12 @@ final class PitchDetector {
 
     init() {
         log2n = vDSP_Length(Int(log2(Double(n))))
-        fftSetup = vDSP_create_fftsetup(log2n, FFTRADIX_2)!
+        fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2))!
         magnitudes = [Float](repeating: 0, count: n / 2)
         window = [Float](repeating: 0, count: n)
-        vDSP_hann_window(&window, vDSP_Length(n), Int32(VDSP_HANN_NORM))
+        for i in 0..<n {
+            window[i] = 0.5 * (1.0 - cos(2.0 * .pi * Float(i) / Float(n - 1)))
+        }
         ring = [Float](repeating: 0, count: n * 2)
     }
 
@@ -47,14 +49,8 @@ final class PitchDetector {
     // MARK: - Permission + lifecycle
 
     func requestPermission(onDenied: @escaping () -> Void, onGranted: @escaping () -> Void) {
-        if #available(iOS 17.0, *) {
-            AVAudioApplication.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async { granted ? onGranted() : onDenied() }
-            }
-        } else {
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async { granted ? onGranted() : onDenied() }
-            }
+        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            DispatchQueue.main.async { granted ? onGranted() : onDenied() }
         }
     }
 
@@ -62,7 +58,7 @@ final class PitchDetector {
 
     func start() throws {
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .allowBluetooth])
+        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
         try session.setActive(true)
 
         let input = audioEngine.inputNode
@@ -140,7 +136,7 @@ final class PitchDetector {
                         vDSP_ctoz(cp, 2, &split, 1, vDSP_Length(n / 2))
                     }
                 }
-                vDSP_fft_zrip(fftSetup, &split, 1, log2n, FFT_FORWARD)
+                vDSP_fft_zrip(fftSetup, &split, 1, log2n, FFTDirection(FFT_FORWARD))
                 vDSP_zvmags(&split, 1, &mags, 1, vDSP_Length(n / 2))
             }
         }
