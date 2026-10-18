@@ -1,331 +1,176 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>archiveVersion</key>
-	<integer>1</integer>
-	<key>classes</key>
-	<dict/>
-	<key>objectVersion</key>
-	<integer>52</integer>
-	<key>objects</key>
-	<dict>
-		<key>8A00000123456789ABCDEF</key>
-		<dict>
-			<key>attributes</key>
-			<dict>
-				<key>LastUpgradeCheck</key>
-				<integer>1500</integer>
-				<key>TargetAttributes</key>
-				<dict>
-					<key>8A00000523456789ABCDEF</key>
-					<dict>
-						<key>CreatedOnToolsVersion</key>
-						<string>15.0</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>buildConfigurationList</key>
-			<string>8A00000623456789ABCDEF</string>
-			<key>compatibilityVersion</key>
-			<string>Xcode 15.0</string>
-			<key>developmentRegion</key>
-			<string>en</string>
-			<key>hasScannedForEncodings</key>
-			<integer>0</integer>
-			<key>isa</key>
-			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>en</string>
-			</array>
-			<key>mainGroup</key>
-			<string>8A00000223456789ABCDEF</string>
-			<key>productRefGroup</key>
-			<string>8A00000323456789ABCDEF</string>
-			<key>projectDirPath</key>
-			<string></string>
-			<key>projectRoot</key>
-			<string></string>
-			<key>targets</key>
-			<array>
-				<string>8A00000523456789ABCDEF</string>
-			</array>
-		</dict>
-		<key>8A00000223456789ABCDEF</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>8A000030023456789ABCDEF</string>
-				<string>8A000030123456789ABCDEF</string>
-				<string>8A000030223456789ABCDEF</string>
-				<string>8A000030323456789ABCDEF</string>
-				<string>8A000030423456789ABCDEF</string>
-				<string>8A00000323456789ABCDEF</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A00000323456789ABCDEF</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>8A00000923456789ABCDEF</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A00000423456789ABCDEF</key>
-		<dict>
-			<key>buildActionMask</key>
-			<integer>2147483647</integer>
-			<key>files</key>
-			<array>
-				<string>8A000020023456789ABCDEF</string>
-				<string>8A000020123456789ABCDEF</string>
-				<string>8A000020223456789ABCDEF</string>
-				<string>8A000020323456789ABCDEF</string>
-				<string>8A000020423456789ABCDEF</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<integer>0</integer>
-		</dict>
-		<key>8A00000523456789ABCDEF</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>8A00000623456789ABCDEF</string>
-			<key>buildPhases</key>
-			<array>
-				<string>8A00000423456789ABCDEF</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>TromboneTuner</string>
-			<key>productName</key>
-			<string>TromboneTuner</string>
-			<key>productReference</key>
-			<string>8A00000923456789ABCDEF</string>
-			<key>productType</key>
-			<string>com.apple.product-type.application</string>
-		</dict>
-		<key>8A00000623456789ABCDEF</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>8A00000723456789ABCDEF</string>
-				<string>8A00000823456789ABCDEF</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<integer>0</integer>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>8A00000723456789ABCDEF</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGNING_ALLOWED</key>
-				<string>NO</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string></string>
-				<key>DEBUG_INFORMATION_FORMAT</key>
-				<string>dwarf</string>
-				<key>INFOPLIST_FILE</key>
-				<string>TromboneTuner/Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>16.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-				</array>
-				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>com.carte.trombonetuner</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SUPPORTED_PLATFORMS</key>
-				<array>
-					<string>iphoneos</string>
-					<string>iphonesimulator</string>
-				</array>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>8A00000823456789ABCDEF</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGNING_ALLOWED</key>
-				<string>NO</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string></string>
-				<key>DEBUG_INFORMATION_FORMAT</key>
-				<string>dwarf-with-dsym</string>
-				<key>INFOPLIST_FILE</key>
-				<string>TromboneTuner/Info.plist</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>16.0</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/Frameworks</string>
-				</array>
-				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>com.carte.trombonetuner</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SUPPORTED_PLATFORMS</key>
-				<array>
-					<string>iphoneos</string>
-					<string>iphonesimulator</string>
-				</array>
-				<key>TARGETED_DEVICE_FAMILY</key>
-				<string>1,2</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>8A00000923456789ABCDEF</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.application</string>
-			<key>includeInIndex</key>
-			<integer>0</integer>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>TromboneTuner.app</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>8A000020023456789ABCDEF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8A000030023456789ABCDEF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8A000020123456789ABCDEF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8A000030123456789ABCDEF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8A000020223456789ABCDEF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8A000030223456789ABCDEF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8A000020323456789ABCDEF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8A000030323456789ABCDEF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8A000020423456789ABCDEF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>8A000030423456789ABCDEF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>8A000030023456789ABCDEF</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>name</key>
-			<string>TromboneTunerApp.swift</string>
-			<key>path</key>
-			<string>TromboneTuner/TromboneTunerApp.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A000030123456789ABCDEF</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>name</key>
-			<string>ContentView.swift</string>
-			<key>path</key>
-			<string>TromboneTuner/ContentView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A000030223456789ABCDEF</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>name</key>
-			<string>TunerViewModel.swift</string>
-			<key>path</key>
-			<string>TromboneTuner/TunerViewModel.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A000030323456789ABCDEF</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>name</key>
-			<string>PitchDetector.swift</string>
-			<key>path</key>
-			<string>TromboneTuner/PitchDetector.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8A000030423456789ABCDEF</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>name</key>
-			<string>Note.swift</string>
-			<key>path</key>
-			<string>TromboneTuner/Note.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-	</dict>
-	<key>rootObject</key>
-	<string>8A00000123456789ABCDEF</string>
-</dict>
-</plist>
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000000000000000000200 /* TromboneTunerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000100 /* TromboneTunerApp.swift */; };
+		A1000000000000000000201 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000101 /* ContentView.swift */; };
+		A1000000000000000000202 /* TunerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000102 /* TunerViewModel.swift */; };
+		A1000000000000000000203 /* PitchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000103 /* PitchDetector.swift */; };
+		A1000000000000000000204 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000104 /* Note.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000009 /* TromboneTuner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TromboneTuner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000000000000000000100 /* TromboneTunerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TromboneTunerApp.swift; path = "TromboneTuner/TromboneTunerApp.swift"; sourceTree = "<group>"; };
+		A1000000000000000000101 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = "TromboneTuner/ContentView.swift"; sourceTree = "<group>"; };
+		A1000000000000000000102 /* TunerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TunerViewModel.swift; path = "TromboneTuner/TunerViewModel.swift"; sourceTree = "<group>"; };
+		A1000000000000000000103 /* PitchDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PitchDetector.swift; path = "TromboneTuner/PitchDetector.swift"; sourceTree = "<group>"; };
+		A1000000000000000000104 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Note.swift; path = "TromboneTuner/Note.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000100 /* TromboneTunerApp.swift */,
+				A1000000000000000000101 /* ContentView.swift */,
+				A1000000000000000000102 /* TunerViewModel.swift */,
+				A1000000000000000000103 /* PitchDetector.swift */,
+				A1000000000000000000104 /* Note.swift */,
+				A10000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000009 /* TromboneTuner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000005 /* TromboneTuner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000006 /* Build configuration list for PBXNativeTarget "TromboneTuner" */;
+			buildPhases = (
+				A10000000000000000000004 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TromboneTuner;
+			productName = TromboneTuner;
+			productReference = A10000000000000000000009 /* TromboneTuner.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A10000000000000000000005 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A10000000000000000000006 /* Build configuration list for PBXProject "TromboneTuner" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10000000000000000000002;
+			productRefGroup = A10000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000000000000000000005 /* TromboneTuner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000200 /* TromboneTunerApp.swift in Sources */,
+				A1000000000000000000201 /* ContentView.swift in Sources */,
+				A1000000000000000000202 /* TunerViewModel.swift in Sources */,
+				A1000000000000000000203 /* PitchDetector.swift in Sources */,
+				A1000000000000000000204 /* Note.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = TromboneTuner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carte.trombonetuner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A10000000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = TromboneTuner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.carte.trombonetuner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000006 /* Build configuration list for PBXProject "TromboneTuner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000007 /* Debug */,
+				A10000000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000000000000000000001 /* Project object */;
+}
