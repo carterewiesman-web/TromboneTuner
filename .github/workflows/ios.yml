@@ -12,5 +12,106 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Info
-        run: echo hi
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Generate Xcode project
+        run: |
+          if [ ! -d "TromboneTuner.xcodeproj" ]; then
+            python3 make_xcodeproj.py
+          fi
+
+      - name: Ensure shared scheme
+        run: |
+          mkdir -p TromboneTuner.xcodeproj/xcshareddata/xcschemes
+          cat > TromboneTuner.xcodeproj/xcshareddata/xcschemes/TromboneTuner.xcscheme << 'SCHEME'
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1500"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8A00000523456789ABCDEF05"
+               BuildableName = "TromboneTuner.app"
+               BlueprintName = "TromboneTuner"
+               ReferencedContainer = "container:TromboneTuner.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <LaunchAction
+      buildConfiguration = "Release"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8A00000523456789ABCDEF05"
+            BuildableName = "TromboneTuner.app"
+            BlueprintName = "TromboneTuner"
+            ReferencedContainer = "container:TromboneTuner.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8A00000523456789ABCDEF05"
+            BuildableName = "TromboneTuner.app"
+            BlueprintName = "TromboneTuner"
+            ReferencedContainer = "container:TromboneTuner.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
+SCHEME
+
+      - name: Build IPA
+        run: |
+          xcodebuild -scheme TromboneTuner -project TromboneTuner.xcodeproj -sdk iphoneos -configuration Release -derivedDataPath build CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO build
+
+      - name: Package
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/TromboneTuner.app Payload/
+          zip -r TromboneTuner.ipa Payload
+          ls -lh TromboneTuner.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TromboneTuner-ipa
+          path: TromboneTuner.ipa
+          retention-days: 7
