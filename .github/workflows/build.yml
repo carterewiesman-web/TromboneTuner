@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
             -archivePath build/TromboneTuner.xcarchive \
             archive \
             CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO \
-            ONLY_ACTIVE_ARCH=NO
+            ONLY_ACTIVE_ARCH=NO 2>&1 | tee build.log
           mkdir -p build/Payload
           cp -R build/TromboneTuner.xcarchive/Products/Applications/TromboneTuner.app build/Payload/
           # Verify the binary exists and is arm64 before zipping
@@ -39,6 +39,15 @@ jobs:
           cd build
           zip -qry TromboneTuner.ipa Payload
           unzip -l TromboneTuner.ipa
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
